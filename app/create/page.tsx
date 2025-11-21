@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Card, CardBody } from "@heroui/card";
@@ -8,18 +8,17 @@ import { Button } from "@heroui/button";
 import { Input, Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { Bell, Calendar, Plus, Calendar as CalendarIcon } from "lucide-react";
-
 import { addToast } from "@heroui/toast";
 
 import { useApp } from "@/context/app-context";
 
-export default function CreatePage() {
+function CreatePageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { addAnnouncement, addSubstitution } = useApp();
-  const [activeTab, setActiveTab] = useState<
-    "announcement" | "substitution"
-  >("announcement");
+  const [activeTab, setActiveTab] = useState<"announcement" | "substitution">(
+    "announcement",
+  );
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [period, setPeriod] = useState("");
@@ -44,8 +43,10 @@ export default function CreatePage() {
           description: "Bitte füllen Sie alle Felder aus!",
           color: "danger",
         });
+
         return;
       }
+
       addAnnouncement({
         title,
         message,
@@ -63,9 +64,10 @@ export default function CreatePage() {
           title: "Fehler",
           description: "Bitte wählen Sie Stunde und Typ aus!",
           color: "danger",
-      });
-      return;
-    }
+        });
+
+        return;
+      }
 
     let finalMessage = "";
       if (type === "substitution") {
@@ -325,6 +327,14 @@ export default function CreatePage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function CreatePage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Laden...</div>}>
+      <CreatePageContent />
+    </Suspense>
   );
 }
 
