@@ -54,7 +54,7 @@ export default function CreatePage() {
       });
     } else {
       if (!period || !type) {
-        toast({
+        addToast({
           title: "Fehler",
           description: "Bitte wählen Sie Stunde und Typ aus!",
           color: "danger",
@@ -65,7 +65,7 @@ export default function CreatePage() {
       let finalMessage = "";
       if (type === "substitution") {
         if (!teacher) {
-          toast({
+          addToast({
             title: "Fehler",
             description: "Bitte geben Sie den Vertretungslehrer ein!",
             color: "danger",
@@ -75,7 +75,7 @@ export default function CreatePage() {
         finalMessage = `Wir Vertreten von: ${teacher}`;
       } else if (type === "room-change") {
         if (!room) {
-          toast({
+          addToast({
             title: "Fehler",
             description: "Bitte geben Sie den neuen Raum ein!",
             color: "danger",
@@ -85,7 +85,7 @@ export default function CreatePage() {
         finalMessage = `Raumänderung: ${room}`;
       } else if (type === "cancelled") {
         if (!message) {
-          toast({
+          addToast({
             title: "Fehler",
             description: "Bitte geben Sie einen Grund ein!",
             color: "danger",
