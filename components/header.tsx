@@ -49,13 +49,13 @@ export const Header = () => {
             variant="bordered"
             size="sm"
           >
-            <SelectItem key="12ME2" value="12ME2">
+            <SelectItem key="12ME2">
               12ME2
             </SelectItem>
-            <SelectItem key="11ME1" value="11ME1">
+            <SelectItem key="11ME1">
               11ME1
             </SelectItem>
-            <SelectItem key="10ME1" value="10ME1">
+            <SelectItem key="10ME1">
               10ME1
             </SelectItem>
           </Select>
