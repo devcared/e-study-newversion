@@ -2,39 +2,44 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@heroui/button";
-import { Plus } from "lucide-react";
-import { useRef } from "react";
-
-interface Announcement {
-  id: string;
-  title: string;
-  message: string;
-  author: string;
-}
-
-const announcements: Announcement[] = [
-  {
-    id: "1",
-    title: "Lehrer Besprechung",
-    message: "Aufgrund einer Lehrer Besprechung fallen die 5 - 6 Stunde für alle Mechatroniker/innen aus.",
-    author: "Administrator",
-  },
-  {
-    id: "2",
-    title: "Zeugnisausgabe",
-    message: "Am 22.11.2025 findet die Zeugnisausgabe statt.",
-    author: "Administrator",
-  },
-  {
-    id: "3",
-    title: "Wichtige Information",
-    message: "Bitte beachten Sie die neuen Öffnungszeiten der Bibliothek.",
-    author: "Administrator",
-  },
-];
+import { Plus, Trash2 } from "lucide-react";
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useApp } from "@/context/app-context";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@heroui/modal";
+import { addToast } from "@heroui/toast";
 
 export const AnnouncementsSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const { announcements, deleteAnnouncement } = useApp();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const handleDelete = (id: string) => {
+    setDeleteId(id);
+    onOpen();
+  };
+
+  const confirmDelete = () => {
+    if (deleteId) {
+      deleteAnnouncement(deleteId);
+      addToast({
+        title: "Gelöscht",
+        description: "Die Ankündigung wurde erfolgreich gelöscht",
+        color: "success",
+      });
+      setDeleteId(null);
+      onClose();
+    }
+  };
 
   return (
     <motion.section
@@ -67,6 +72,7 @@ export const AnnouncementsSection = () => {
               radius="full"
               className="text-[#00A7FF] border-[#00A7FF] px-3 py-1 h-auto text-sm font-medium"
               startContent={<Plus className="w-4 h-4" strokeWidth={2.5} />}
+              onClick={() => router.push("/create?tab=announcement")}
             >
               Neue Ankündigung
             </Button>
@@ -82,14 +88,15 @@ export const AnnouncementsSection = () => {
             scrollbarColor: "#93c5fd #dbeafe",
           }}
         >
-          {announcements.map((announcement, index) => (
+          {announcements.length > 0 ? (
+            announcements.map((announcement, index) => (
             <motion.div
               key={announcement.id}
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
               whileHover={{ scale: 1.02, y: -2 }}
-              className="max-w-[250px] flex-shrink-0"
+              className="max-w-[250px] flex-shrink-0 relative group"
             >
               <div className="bg-[#00A7FF] rounded-2xl p-5 h-full flex flex-col shadow-md">
                 <div className="flex flex-col gap-3 flex-grow">
@@ -99,18 +106,58 @@ export const AnnouncementsSection = () => {
                   <p className="text-sm text-white leading-relaxed flex-grow">
                     {announcement.message}
                   </p>
-                  <div className="flex items-center gap-2 mt-auto">
-                    <div className="w-5 h-5 bg-white/20 rounded flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">A</span>
+                  <div className="flex items-center justify-between mt-auto">
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 bg-white/20 rounded flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">A</span>
+                      </div>
+                      <span className="text-xs text-white/90">
+                        {announcement.author}
+                      </span>
                     </div>
-                    <span className="text-xs text-white/90">
-                      {announcement.author}
-                    </span>
+                    <motion.button
+                      onClick={() => handleDelete(announcement.id)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/20 rounded"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <Trash2 className="w-4 h-4 text-white" />
+                    </motion.button>
                   </div>
                 </div>
               </div>
             </motion.div>
-          ))}
+            ))
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-white rounded-2xl p-6 text-center min-w-[250px]"
+            >
+              <p className="text-gray-500">Keine Ankündigungen vorhanden</p>
+            </motion.div>
+          )}
+          
+          <Modal isOpen={isOpen} onClose={onClose} radius="lg">
+            <ModalContent>
+              <ModalHeader>Ankündigung löschen?</ModalHeader>
+              <ModalBody>
+                <p>Möchten Sie diese Ankündigung wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="light" onPress={onClose}>
+                  Abbrechen
+                </Button>
+                <Button
+                  color="danger"
+                  onPress={confirmDelete}
+                  startContent={<Trash2 className="w-4 h-4" />}
+                >
+                  Löschen
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
         </div>
       </div>
     </motion.section>

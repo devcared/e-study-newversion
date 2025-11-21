@@ -3,47 +3,19 @@
 import { motion } from "framer-motion";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
-import { Plus } from "lucide-react";
-
-interface SubstitutionEntry {
-  id: string;
-  period: string;
-  type: "substitution" | "room-change" | "cancelled";
-  message: string;
-}
-
-const substitutions: SubstitutionEntry[] = [
-  {
-    id: "1",
-    period: "1 - 2 Stunde",
-    type: "substitution",
-    message: "Wir Vertreten von: Mirko Klenner",
-  },
-  {
-    id: "2",
-    period: "3 - 4 Stunde",
-    type: "room-change",
-    message: "Raumänderung: G410 > C312",
-  },
-  {
-    id: "3",
-    period: "5 - 6 Stunde",
-    type: "cancelled",
-    message: "Fällt aus aufgrund von: Besprechnung",
-  },
-  {
-    id: "4",
-    period: "1 - 2 Stunde",
-    type: "substitution",
-    message: "Wir Vertreten von: Mirko Klenner",
-  },
-  {
-    id: "5",
-    period: "3 - 4 Stunde",
-    type: "room-change",
-    message: "Raumänderung: G410 > C312",
-  },
-];
+import { Plus, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useApp } from "@/context/app-context";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@heroui/modal";
+import { addToast } from "@heroui/toast";
+import { useState } from "react";
 
 const getBackgroundColor = (type: string) => {
   switch (type) {
@@ -58,7 +30,33 @@ const getBackgroundColor = (type: string) => {
   }
 };
 
-export const SubstitutionPlanSection = () => {
+export const SubstitutionPlanSection = ({ selectedDate }: { selectedDate?: Date }) => {
+  const router = useRouter();
+  const { getSubstitutionsByDate, deleteSubstitution } = useApp();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  
+  const dateToUse = selectedDate || new Date();
+  const substitutions = getSubstitutionsByDate(dateToUse);
+
+  const handleDelete = (id: string) => {
+    setDeleteId(id);
+    onOpen();
+  };
+
+  const confirmDelete = () => {
+    if (deleteId) {
+      deleteSubstitution(deleteId);
+      addToast({
+        title: "Gelöscht",
+        description: "Die Vertretung wurde erfolgreich gelöscht",
+        color: "success",
+      });
+      setDeleteId(null);
+      onClose();
+    }
+  };
+  
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
@@ -90,6 +88,7 @@ export const SubstitutionPlanSection = () => {
               radius="full"
               className="text-[#00A7FF] border-[#00A7FF] px-3 py-1 h-auto text-sm font-medium"
               startContent={<Plus className="w-4 h-4" strokeWidth={2.5} />}
+              onClick={() => router.push("/create?tab=substitution")}
             >
               Plan Änderung
             </Button>
@@ -98,32 +97,71 @@ export const SubstitutionPlanSection = () => {
 
         {/* Substitution Entries */}
         <div className="flex flex-col gap-3">
-          {substitutions.map((entry, index) => (
+          {substitutions.length > 0 ? (
+            substitutions.map((entry, index) => (
+              <motion.div
+                key={entry.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
+                whileHover={{ scale: 1.01, y: -1 }}
+                className={`${getBackgroundColor(entry.type)} rounded-full p-2 relative group`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <Chip
+                    classNames={{
+                      base: "bg-white border-0",
+                      content: "text-black text-xs font-semibold w-full max-w-[120px]",
+                    }}
+                    radius="full"
+                  >
+                    {entry.period}
+                  </Chip>
+                  <span className="text-sm font-medium text-white text-right flex-1 mr-4">
+                    {entry.message}
+                  </span>
+                  <motion.button
+                    onClick={() => handleDelete(entry.id)}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/20 rounded"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <Trash2 className="w-4 h-4 text-white" />
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))
+          ) : (
             <motion.div
-              key={entry.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
-              whileHover={{ scale: 1.01, y: -1 }}
-              className={`${getBackgroundColor(entry.type)} rounded-full p-2`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-white rounded-2xl p-6 text-center"
             >
-              <div className="flex items-center justify-between gap-3">
-                <Chip
-                  classNames={{
-                    base: "bg-white border-0",
-                    content: "text-black text-xs font-semibold w-full max-w-[120px]",
-                  }}
-                  radius="full"
-                >
-                  {entry.period}
-                </Chip>
-                <span className="text-sm font-medium text-white text-right flex-1 mr-4">
-                  {entry.message}
-                </span>
-              </div>
+              <p className="text-gray-500">Keine Vertretungen für diesen Tag</p>
             </motion.div>
-          ))}
+          )}
         </div>
+        
+        <Modal isOpen={isOpen} onClose={onClose} radius="lg">
+          <ModalContent>
+            <ModalHeader>Vertretung löschen?</ModalHeader>
+            <ModalBody>
+              <p>Möchten Sie diese Vertretung wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.</p>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="light" onPress={onClose}>
+                Abbrechen
+              </Button>
+              <Button
+                color="danger"
+                onPress={confirmDelete}
+                startContent={<Trash2 className="w-4 h-4" />}
+              >
+                Löschen
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </div>
     </motion.section>
   );

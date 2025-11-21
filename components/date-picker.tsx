@@ -24,9 +24,10 @@ const DAYS_SHORT = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 
 interface DatePickerProps {
   initialDate?: Date;
+  onDateChange?: (date: Date) => void;
 }
 
-export const DatePicker = ({ initialDate = new Date() }: DatePickerProps) => {
+export const DatePicker = ({ initialDate = new Date(), onDateChange }: DatePickerProps) => {
   const [currentDate, setCurrentDate] = useState(initialDate);
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -63,9 +64,14 @@ export const DatePicker = ({ initialDate = new Date() }: DatePickerProps) => {
   };
 
   const handleDateSelect = (date: Date) => {
-    setSelectedDate(new Date(date));
+    const newDate = new Date(date);
+    setSelectedDate(newDate);
     // Scroll to selected date
     scrollToDate(date);
+    // Notify parent component
+    if (onDateChange) {
+      onDateChange(newDate);
+    }
   };
 
   const scrollToDate = (date: Date) => {

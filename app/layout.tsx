@@ -9,6 +9,7 @@ import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Header } from "@/components/header";
 import { MobileBottomNavbar } from "@/components/mobile-bottom-navbar";
+import { AppProvider } from "@/context/app-context";
 
 export const metadata: Metadata = {
   title: {
@@ -43,13 +44,15 @@ export default function RootLayout({
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
-          <div className="relative flex flex-col h-screen">
-            <Header />
-            <main className="flex-grow overflow-y-auto">
-              {children}
-            </main>
-            <MobileBottomNavbar />
-          </div>
+          <AppProvider>
+            <div className="relative flex flex-col h-screen">
+              <Header />
+              <main className="flex-grow overflow-y-auto">
+                {children}
+              </main>
+              <MobileBottomNavbar />
+            </div>
+          </AppProvider>
         </Providers>
       </body>
     </html>
