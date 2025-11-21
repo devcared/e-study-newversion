@@ -8,14 +8,18 @@ import { Button } from "@heroui/button";
 import { Input, Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { Bell, Calendar, Plus, Calendar as CalendarIcon } from "lucide-react";
-import { useApp } from "@/context/app-context";
+
 import { addToast } from "@heroui/toast";
+
+import { useApp } from "@/context/app-context";
 
 export default function CreatePage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { addAnnouncement, addSubstitution } = useApp();
-  const [activeTab, setActiveTab] = useState<"announcement" | "substitution">("announcement");
+  const [activeTab, setActiveTab] = useState<
+    "announcement" | "substitution"
+  >("announcement");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [period, setPeriod] = useState("");
@@ -26,6 +30,7 @@ export default function CreatePage() {
 
   useEffect(() => {
     const tab = searchParams.get("tab");
+
     if (tab === "announcement" || tab === "substitution") {
       setActiveTab(tab);
     }
@@ -58,11 +63,11 @@ export default function CreatePage() {
           title: "Fehler",
           description: "Bitte wählen Sie Stunde und Typ aus!",
           color: "danger",
-        });
-        return;
-      }
-      
-      let finalMessage = "";
+      });
+      return;
+    }
+
+    let finalMessage = "";
       if (type === "substitution") {
         if (!teacher) {
           addToast({
@@ -94,7 +99,7 @@ export default function CreatePage() {
         }
         finalMessage = `Fällt aus aufgrund von: ${message}`;
       }
-      
+
       addSubstitution({
         period,
         type: type as "substitution" | "room-change" | "cancelled",
@@ -109,7 +114,7 @@ export default function CreatePage() {
         color: "success",
       });
     }
-    
+
     setTitle("");
     setMessage("");
     setPeriod("");

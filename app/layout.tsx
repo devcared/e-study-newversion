@@ -1,6 +1,5 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
-import { Link } from "@heroui/link";
 import clsx from "clsx";
 
 import { Providers } from "./providers";
@@ -47,9 +46,7 @@ export default function RootLayout({
           <AppProvider>
             <div className="relative flex flex-col h-screen">
               <Header />
-              <main className="flex-grow overflow-y-auto">
-                {children}
-              </main>
+              <main className="flex-grow overflow-y-auto">{children}</main>
               <MobileBottomNavbar />
             </div>
           </AppProvider>

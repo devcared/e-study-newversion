@@ -12,9 +12,10 @@ import {
 } from "@heroui/dropdown";
 import { Bell, Check, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useApp } from "@/context/app-context";
-import { motion, AnimatePresence } from "framer-motion";
+
 import { addToast } from "@heroui/toast";
+
+import { useApp } from "@/context/app-context";
 
 export const Header = () => {
   const [selectedClass, setSelectedClass] = useState("12ME2");
@@ -95,9 +96,7 @@ export const Header = () => {
             <span className="text-sm font-semibold text-gray-800">
               Emil Schröder
             </span>
-            <span className="text-xs text-gray-500">
-              Schüler / 12ME2
-            </span>
+            <span className="text-xs text-gray-500">Schüler / 12ME2</span>
           </div>
         </div>
 
@@ -107,6 +106,7 @@ export const Header = () => {
             selectedKeys={[selectedClass]}
             onSelectionChange={(keys) => {
               const selected = Array.from(keys)[0] as string;
+
               setSelectedClass(selected);
               addToast({
                 title: "Klasse geändert",
@@ -134,18 +134,20 @@ export const Header = () => {
         {/* Right: Notification Button */}
         <Dropdown placement="bottom-end" radius="lg">
           <DropdownTrigger>
-            <Badge
-              content={unreadNotifications > 0 ? unreadNotifications : undefined}
-              color="primary"
+          <Badge
+            color="primary"
+            content={
+              unreadNotifications > 0 ? unreadNotifications : undefined
+            }
               size="sm"
               classNames={{
                 badge: "bg-[#00A7FF] text-white text-xs font-medium min-w-[18px] h-[18px]",
               }}
             >
               <Button
-                isIconOnly
-                className="bg-[#00A7FF] text-white rounded-xl w-12 h-12"
                 aria-label="Benachrichtigungen"
+                className="bg-[#00A7FF] text-white rounded-xl w-12 h-12"
+                isIconOnly
               >
                 <Bell className="w-5 h-5" strokeWidth={2} />
               </Button>
@@ -164,7 +166,9 @@ export const Header = () => {
               textValue="header"
             >
               <div className="flex items-center justify-between w-full">
-                <span className="font-semibold text-lg">Benachrichtigungen</span>
+                <span className="font-semibold text-lg">
+                  Benachrichtigungen
+                </span>
                 {unreadNotifications > 0 && (
                   <span className="text-xs text-gray-500">
                     {unreadNotifications} ungelesen
@@ -185,7 +189,9 @@ export const Header = () => {
                     onPress={() => handleNotificationClick(notification.id)}
                   >
                     <div className="flex items-start gap-3 w-full">
-                      <span className="text-2xl">{getNotificationIcon(notification.type)}</span>
+                      <span className="text-2xl">
+                        {getNotificationIcon(notification.type)}
+                      </span>
                       <div className="flex flex-col gap-1 flex-1">
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-semibold text-gray-800">
@@ -230,7 +236,9 @@ export const Header = () => {
             ) : (
               <DropdownItem key="empty" textValue="Keine Benachrichtigungen">
                 <div className="text-center py-4">
-                  <p className="text-sm text-gray-500">Keine Benachrichtigungen</p>
+                  <p className="text-sm text-gray-500">
+                    Keine Benachrichtigungen
+                  </p>
                 </div>
               </DropdownItem>
             )}

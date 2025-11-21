@@ -6,7 +6,7 @@ import { Avatar } from "@heroui/avatar";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
-import { User, Mail, Phone, MapPin, Settings, LogOut } from "lucide-react";
+import { Mail, Phone, MapPin, Settings, LogOut } from "lucide-react";
 
 export default function ProfilePage() {
   return (
