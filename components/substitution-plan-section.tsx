@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/context/app-context";
 import {
@@ -35,9 +35,22 @@ export const SubstitutionPlanSection = ({ selectedDate }: { selectedDate?: Date 
   const { getSubstitutionsByDate, deleteSubstitution } = useApp();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   
   const dateToUse = selectedDate || new Date();
   const substitutions = getSubstitutionsByDate(dateToUse);
+
+  const toggleExpand = (id: string) => {
+    setExpandedIds((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
 
   const handleDelete = (id: string) => {
     setDeleteId(id);
@@ -98,39 +111,83 @@ export const SubstitutionPlanSection = ({ selectedDate }: { selectedDate?: Date 
         {/* Substitution Entries */}
         <div className="flex flex-col gap-3">
           {substitutions.length > 0 ? (
-            substitutions.map((entry, index) => (
-              <motion.div
-                key={entry.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
-                whileHover={{ scale: 1.01, y: -1 }}
-                className={`${getBackgroundColor(entry.type)} rounded-full p-2 relative group`}
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <Chip
-                    classNames={{
-                      base: "bg-white border-0",
-                      content: "text-black text-xs font-semibold w-full max-w-[120px]",
-                    }}
-                    radius="full"
-                  >
-                    {entry.period}
-                  </Chip>
-                  <span className="text-sm font-medium text-white text-right flex-1 mr-4">
-                    {entry.message}
-                  </span>
-                  <motion.button
-                    onClick={() => handleDelete(entry.id)}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/20 rounded"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <Trash2 className="w-4 h-4 text-white" />
-                  </motion.button>
-                </div>
-              </motion.div>
-            ))
+            substitutions.map((entry, index) => {
+              const isExpanded = expandedIds.has(entry.id);
+              const needsExpansion = entry.message.length > 60;
+              
+              return (
+                <motion.div
+                  key={entry.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
+                  className={`${getBackgroundColor(entry.type)} rounded-2xl p-3 relative group w-full`}
+                >
+                  <div className="flex items-start gap-3">
+                    {/* Chip - oben links, fest positioniert */}
+                    <Chip
+                      classNames={{
+                        base: "bg-white border-0 flex-shrink-0",
+                        content: "text-black text-xs font-semibold",
+                      }}
+                      radius="full"
+                    >
+                      {entry.period}
+                    </Chip>
+                    
+                    {/* Text-Bereich */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <motion.p
+                          className="text-sm font-medium text-white"
+                          animate={{
+                            WebkitLineClamp: isExpanded ? "none" : 1,
+                          }}
+                          transition={{ duration: 0.2 }}
+                          style={{
+                            display: "-webkit-box",
+                            WebkitBoxOrient: "vertical",
+                            overflow: isExpanded ? "visible" : "hidden",
+                            textOverflow: isExpanded ? "clip" : "ellipsis",
+                          }}
+                        >
+                          {entry.message}
+                        </motion.p>
+                        
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          {/* Expand/Collapse Button - nur wenn Text lang ist */}
+                          {needsExpansion && (
+                            <motion.button
+                              onClick={() => toggleExpand(entry.id)}
+                              className="p-1.5 hover:bg-white/20 rounded-full transition-colors"
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              animate={{ rotate: isExpanded ? 180 : 0 }}
+                              transition={{ duration: 0.2, ease: "easeInOut" }}
+                            >
+                              <ChevronDown className="w-4 h-4 text-white" strokeWidth={2.5} />
+                            </motion.button>
+                          )}
+                          
+                          {/* Delete Button */}
+                          <motion.button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(entry.id);
+                            }}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-white/20 rounded-full"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            <Trash2 className="w-4 h-4 text-white" strokeWidth={2.5} />
+                          </motion.button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })
           ) : (
             <motion.div
               initial={{ opacity: 0 }}

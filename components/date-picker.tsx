@@ -175,34 +175,33 @@ export const DatePicker = ({ initialDate = new Date(), onDateChange }: DatePicke
               return (
                 <motion.div
                   key={date.getTime()}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   transition={{
                     duration: 0.2,
-                    type: "spring",
+                    type: "rotateY",
                     stiffness: 200,
                     damping: 20,
                   }}
-                  whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <Button
                     onClick={() => handleDateSelect(date)}
                     className={`
-                      min-w-[85px] h-20 rounded-3xl font-medium flex-shrink-0
+                      min-w-[85px] h-20 rounded-4xl font-bahnschrift font-bold flex-shrink-0
                       transition-all duration-300 border-0
                       ${
                         isDateSelected
                           ? "bg-[#00A7FF] text-white shadow-md"
-                          : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                          : "bg-[#D8F1FF] text-[#00A7FF] hover:bg-[#D8F1FF] border-2 border-white"
                       }
                     `}
-                    radius="lg"
+                    radius="full"
                   >
-                    <div className="flex flex-col items-center justify-center gap-1">
+                    <div className="flex flex-col items-center justify-center">
                       <motion.span
-                        className={`text-lg font-semibold ${
-                          isDateSelected ? "text-white" : "text-blue-700"
+                        className={`text-3xl font-bahnschrift font-bold ${
+                          isDateSelected ? "text-white" : "text-[#00A7FF]"
                         }`}
                         animate={{
                           scale: isDateSelected ? [1, 1.15, 1] : 1,
@@ -217,8 +216,8 @@ export const DatePicker = ({ initialDate = new Date(), onDateChange }: DatePicke
                         {dayNumber}
                       </motion.span>
                       <motion.span
-                        className={`text-xs font-medium ${
-                          isDateSelected ? "text-white" : "text-blue-700"
+                        className={`text-md font-medium ${
+                          isDateSelected ? "text-white" : "text-[#00476C]"
                         }`}
                         animate={{
                           opacity: isDateSelected ? [0.8, 1, 0.8] : 1,

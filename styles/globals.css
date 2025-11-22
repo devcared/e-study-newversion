@@ -1,3 +1,84 @@
 @import "tailwindcss";
 
-@config "../tailwind.config.js"
+@config "../tailwind.config.js";
+
+/* BAHNSCHRIFT Font Face Definitions */
+@font-face {
+  font-family: "BAHNSCHRIFT";
+  src: url("/fonts/BAHNSCHRIFT.TTF") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BAHNSCHRIFT";
+  src: url("/fonts/BAHNSCHRIFT%201.TTF") format("truetype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BAHNSCHRIFT";
+  src: url("/fonts/BAHNSCHRIFT%202.TTF") format("truetype");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BAHNSCHRIFT";
+  src: url("/fonts/BAHNSCHRIFT%203.TTF") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BAHNSCHRIFT";
+  src: url("/fonts/BAHNSCHRIFT%204.TTF") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BAHNSCHRIFT";
+  src: url("/fonts/BAHNSCHRIFT%205.TTF") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BAHNSCHRIFT";
+  src: url("/fonts/BAHNSCHRIFT%206.TTF") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BAHNSCHRIFT";
+  src: url("/fonts/BAHNSCHRIFT%207.TTF") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BAHNSCHRIFT";
+  src: url("/fonts/BAHNSCHRIFT%208.TTF") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BAHNSCHRIFT";
+  src: url("/fonts/BAHNSCHRIFT%209.TTF") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
