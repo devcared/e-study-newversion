@@ -11,7 +11,7 @@ import {
   DropdownItem,
 } from "@heroui/dropdown";
 import { Bell, Check, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { addToast } from "@heroui/toast";
 
@@ -19,6 +19,7 @@ import { useApp } from "@/context/app-context";
 
 export const Header = () => {
   const [selectedClass, setSelectedClass] = useState("12ME2");
+  const [mounted, setMounted] = useState(false);
   const {
     notifications,
     unreadNotifications,
@@ -26,6 +27,10 @@ export const Header = () => {
     markAllNotificationsAsRead,
     clearNotifications,
   } = useApp();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleNotificationClick = (notificationId: string) => {
     markNotificationAsRead(notificationId);
@@ -137,7 +142,7 @@ export const Header = () => {
           <Badge
             color="primary"
             content={
-              unreadNotifications > 0 ? unreadNotifications : undefined
+              mounted && unreadNotifications > 0 ? unreadNotifications : undefined
             }
               size="sm"
               classNames={{

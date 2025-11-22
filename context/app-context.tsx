@@ -98,7 +98,7 @@ const getInitialSubstitutions = (): SubstitutionEntry[] => {
       id: "1",
       period: "1 - 2 Stunde",
       type: "substitution",
-      message: "Wir Vertreten von: Mirko Klenner",
+      message: "Wird vertreten von: Mirko Klenner",
       date: today.toISOString().split("T")[0],
       teacher: "Mirko Klenner",
       createdAt: Date.now(),
@@ -124,7 +124,7 @@ const getInitialSubstitutions = (): SubstitutionEntry[] => {
       id: "4",
       period: "1 - 2 Stunde",
       type: "substitution",
-      message: "Wir Vertreten von: Anna Müller",
+      message: "Wird vertreten von: Anna Müller",
       date: tomorrow.toISOString().split("T")[0],
       teacher: "Anna Müller",
       createdAt: Date.now() - 86400000,
@@ -169,64 +169,52 @@ const getInitialNotifications = (): Notification[] => [
 ];
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  // Initialize with data from localStorage or defaults
-  const [announcements, setAnnouncements] = useState<Announcement[]>(() => {
-    if (typeof window === "undefined") return getInitialAnnouncements();
-    const saved = getFromLocalStorage("announcements");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return getInitialAnnouncements();
-      }
-    }
-    return getInitialAnnouncements();
-  });
+  // Initialize with defaults first (SSR-safe)
+  const [announcements, setAnnouncements] = useState<Announcement[]>(getInitialAnnouncements);
+  const [substitutions, setSubstitutions] = useState<SubstitutionEntry[]>(getInitialSubstitutions);
+  const [notifications, setNotifications] = useState<Notification[]>(getInitialNotifications);
 
-  const [substitutions, setSubstitutions] = useState<SubstitutionEntry[]>(() => {
-    if (typeof window === "undefined") return getInitialSubstitutions();
-    const saved = getFromLocalStorage("substitutions");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return getInitialSubstitutions();
-      }
-    }
-    return getInitialSubstitutions();
-  });
-
-  const [notifications, setNotifications] = useState<Notification[]>(() => {
-    if (typeof window === "undefined") return getInitialNotifications();
-    const saved = getFromLocalStorage("notifications");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return getInitialNotifications();
-      }
-    }
-    return getInitialNotifications();
-  });
-
-  // Save to localStorage on mount if not already saved
+  // Load from localStorage after mount (client-side only)
   useEffect(() => {
     if (typeof window === "undefined") return;
     
     const savedAnnouncements = getFromLocalStorage("announcements");
+    if (savedAnnouncements) {
+      try {
+        const parsed = JSON.parse(savedAnnouncements);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setAnnouncements(parsed);
+        }
+      } catch {
+        // Keep defaults
+      }
+    }
+
     const savedSubstitutions = getFromLocalStorage("substitutions");
+    if (savedSubstitutions) {
+      try {
+        const parsed = JSON.parse(savedSubstitutions);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setSubstitutions(parsed);
+        }
+      } catch {
+        // Keep defaults
+      }
+    }
+
     const savedNotifications = getFromLocalStorage("notifications");
-    
-    if (!savedAnnouncements) {
-      setToLocalStorage("announcements", JSON.stringify(announcements));
-    }
-    if (!savedSubstitutions) {
-      setToLocalStorage("substitutions", JSON.stringify(substitutions));
-    }
-    if (!savedNotifications) {
-      setToLocalStorage("notifications", JSON.stringify(notifications));
+    if (savedNotifications) {
+      try {
+        const parsed = JSON.parse(savedNotifications);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setNotifications(parsed);
+        }
+      } catch {
+        // Keep defaults
+      }
     }
   }, []);
+
 
   // Save to localStorage whenever data changes
   useEffect(() => {

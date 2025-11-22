@@ -138,21 +138,20 @@ export const SubstitutionPlanSection = ({ selectedDate }: { selectedDate?: Date 
                     {/* Text-Bereich */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
-                        <motion.p
-                          className="text-sm font-medium text-white"
-                          animate={{
-                            WebkitLineClamp: isExpanded ? "none" : 1,
-                          }}
-                          transition={{ duration: 0.2 }}
-                          style={{
-                            display: "-webkit-box",
-                            WebkitBoxOrient: "vertical",
-                            overflow: isExpanded ? "visible" : "hidden",
-                            textOverflow: isExpanded ? "clip" : "ellipsis",
-                          }}
+                        <motion.div
+                          className="flex-1 min-w-0 cursor-pointer"
+                          onClick={() => needsExpansion && toggleExpand(entry.id)}
                         >
-                          {entry.message}
-                        </motion.p>
+                          <p
+                            className={`text-sm font-medium text-white ${
+                              isExpanded || !needsExpansion
+                                ? "whitespace-normal break-words"
+                                : "line-clamp-1"
+                            }`}
+                          >
+                            {entry.message}
+                          </p>
+                        </motion.div>
                         
                         <div className="flex items-center gap-1 flex-shrink-0">
                           {/* Expand/Collapse Button - nur wenn Text lang ist */}

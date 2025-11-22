@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@heroui/button";
+import { Chip } from "@heroui/chip";
+import { Avatar } from "@heroui/avatar";
 import { Plus, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -107,14 +109,23 @@ export const AnnouncementsSection = () => {
                     {announcement.message}
                   </p>
                   <div className="flex items-center justify-between mt-auto">
-                    <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 bg-white/20 rounded flex items-center justify-center">
-                        <span className="text-white text-xs font-bold">A</span>
-                      </div>
-                      <span className="text-xs text-white/90">
-                        {announcement.author}
-                      </span>
-                    </div>
+                    <Chip
+                      startContent={
+                        <Avatar
+                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face"
+                          className="w-4 h-4"
+                          size="sm"
+                        />
+                      }
+                      classNames={{
+                        base: "bg-white/20 border-0",
+                        content: "text-white text-xs font-medium",
+                      }}
+                      radius="full"
+                      variant="flat"
+                    >
+                      {announcement.author}
+                    </Chip>
                     <motion.button
                       onClick={() => handleDelete(announcement.id)}
                       className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/20 rounded"

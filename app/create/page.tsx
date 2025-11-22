@@ -79,7 +79,7 @@ function CreatePageContent() {
           });
           return;
         }
-        finalMessage = `Wir Vertreten von: ${teacher}`;
+        finalMessage = `Wird vertreten von: ${teacher}`;
       } else if (type === "room-change") {
         if (!room) {
           addToast({
@@ -102,8 +102,17 @@ function CreatePageContent() {
         finalMessage = `Fällt aus aufgrund von: ${message}`;
       }
 
+      // Convert period key to display format
+      const periodMap: Record<string, string> = {
+        "1-2": "1 - 2 Stunde",
+        "3-4": "3 - 4 Stunde",
+        "5-6": "5 - 6 Stunde",
+        "7-8": "7 - 8 Stunde",
+      };
+      const periodDisplay = periodMap[period] || period;
+
       addSubstitution({
-        period,
+        period: periodDisplay,
         type: type as "substitution" | "room-change" | "cancelled",
         message: finalMessage,
         date,
