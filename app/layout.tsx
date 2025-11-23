@@ -10,6 +10,7 @@ import { Header } from "@/components/header";
 import { MobileBottomNavbar } from "@/components/mobile-bottom-navbar";
 import { AppProvider } from "@/context/app-context";
 import { ToastWrapper } from "@/components/toast-wrapper";
+import { ConditionalLayout } from "@/components/conditional-layout";
 
 export const metadata: Metadata = {
   title: {
@@ -46,11 +47,7 @@ export default function RootLayout({
         <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
           <AppProvider>
             <ToastWrapper />
-            <div className="relative flex flex-col h-screen">
-              <Header />
-              <main className="flex-grow overflow-y-auto">{children}</main>
-              <MobileBottomNavbar />
-            </div>
+            <ConditionalLayout>{children}</ConditionalLayout>
           </AppProvider>
         </Providers>
       </body>

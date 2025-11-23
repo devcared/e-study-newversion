@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Card, CardBody } from "@heroui/card";
 import { Avatar } from "@heroui/avatar";
@@ -7,8 +9,31 @@ import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { Mail, Phone, MapPin, Settings, LogOut } from "lucide-react";
+import { addToast } from "@heroui/toast";
 
 export default function ProfilePage() {
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+
+    // Simuliere Logout-Request
+    setTimeout(() => {
+      setIsLoggingOut(false);
+      addToast({
+        title: "Erfolgreich abgemeldet",
+        description: "Sie wurden erfolgreich abgemeldet",
+        color: "success",
+      });
+
+      // Weiterleitung zur Login-Seite
+      setTimeout(() => {
+        router.push("/login");
+        router.refresh();
+      }, 500);
+    }, 800);
+  };
   return (
     <div className="flex flex-col w-full bg-[#EEF9FF] min-h-screen px-4 py-6">
       <div className="max-w-2xl mx-auto w-full">
@@ -120,10 +145,13 @@ export default function ProfilePage() {
             <Button
               variant="bordered"
               radius="full"
-              className="text-red-500 border-red-500"
+              className="text-red-500 border-red-500 hover:bg-red-50"
               startContent={<LogOut className="w-4 h-4" />}
+              onClick={handleLogout}
+              isLoading={isLoggingOut}
+              isDisabled={isLoggingOut}
             >
-              Abmelden
+              {isLoggingOut ? "Wird abgemeldet..." : "Abmelden"}
             </Button>
           </motion.div>
         </div>
